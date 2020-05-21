@@ -41,16 +41,16 @@ const RouteConfig = ({
   let { pathname } = history.location;
 
   if (
-    (error || !data.obtenerUsuario) &&
+    (!data|| (data && !data.obtenerUsuario)) &&
     loginRoute !== pathname &&
     registerRoute !== pathname
   ) {
     history.push(loginRoute);
   } else if (
-    data.obtenerUsuario &&
+    (data && data.obtenerUsuario) &&
     (loginRoute === pathname || registerRoute === pathname)
   ) {
-    history.goBack();
+    history.push("/");
   }
   return (
     <Route

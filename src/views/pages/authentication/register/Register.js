@@ -31,7 +31,7 @@ import Modal from "../../../../utility/context/Modal";
 import { gql } from "apollo-boost";
 import { useMutation } from "@apollo/react-hooks";
 const nuevo_usuario = gql`
-  mutation nuevoUsuario($input: UsuariInput) {
+  mutation nuevoUsuario($input: UsuarioInput) {
     nuevoUsuario(input: $input) {
       nombre
     }
@@ -62,7 +62,7 @@ const Register = (props) => {
   }
   const handleSubmit = (e) => {
     const { confirmPassword, email, password } = state;
-    regis({ variables: { input: { email, password } } });
+    regis({ variables: { input: { email, password,confirmPassword } } }).catch(e=>console.log(e));
     console.log("hola");
     e.preventDefault();
   };
@@ -154,7 +154,7 @@ const Register = (props) => {
                     </div>
                   </Form>
                 </CardBody>
-                <div className="auth-footer">
+                {/* <div className="auth-footer">
                   <div className="divider">
                     <div className="divider-text">OR</div>
                   </div>
@@ -183,7 +183,7 @@ const Register = (props) => {
                       <Linkedin size={14} stroke="white" />
                     </Button.Ripple>
                   </div>
-                </div>
+                </div> */}
               </Card>
             </Col>
           </Row>

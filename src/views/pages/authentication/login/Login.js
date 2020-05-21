@@ -9,12 +9,14 @@ import {
   FormGroup,
   Input,
   Label,
+  FormFeedback
+
 } from "reactstrap";
 import { Mail, Lock, Check, Facebook, Twitter, GitHub } from "react-feather";
 import { history } from "../../../../history";
 import Checkbox from "../../../../components/@vuexy/checkbox/CheckboxesVuexy";
 import googleSvg from "../../../../assets/img/svg/google.svg";
-
+import client from "../../../../configs/apollo";
 import loginImg from "../../../../assets/img/pages/login.png";
 import "../../../../assets/scss/pages/authentication.scss";
 import { useMutation } from "@apollo/react-hooks";
@@ -31,8 +33,13 @@ const Login = (props) => {
     activeTab: "1",
     email: "",
     password: "",
+    valid:true,
+    isEmail:true
   });
-  const [auth, { data }] = useMutation(autenticar_usuario);
+  const [auth, { data,error }] = useMutation(autenticar_usuario);
+  if (error){
+   console.log (error)
+  }
   const toggle = (tab) => {
     if (state.activeTab !== tab) {
       setState({
@@ -43,13 +50,16 @@ const Login = (props) => {
   console.log(data);
   if (data && data.autenticarUsuario) {
     localStorage.setItem("token", data.autenticarUsuario.token);
+    client.resetStore()
     history.push("/");
   }
   const submit = (e) => {
     e.preventDefault();
     const { email, password } = state;
     if (email !== "" && password !== "") {
-      auth({ variables: { input: { email, password } } });
+      auth({ variables: { input: { email, password } } }).catch(e=>{
+        console.log(e)
+      });
     }
   };
   return (
@@ -81,9 +91,24 @@ const Login = (props) => {
                         placeholder="Email"
                         value={state.email}
                         onChange={(e) =>
-                          setState({ ...state, email: e.target.value })
+                          {
+                            const email = e.target.value;
+                            const emailRegex = /^[-\w.%+]{1,64}@(?:[A-Z0-9-]{1,63}\.){1,125}[A-Z]{2,63}$/i;
+                            let isEmail = true;
+                            if (!emailRegex.test(email)) {
+                              isEmail = false;
+                            }
+
+                            setState({ ...state,email, isEmail });
+                          }
+                          
                         }
+                        invalid={!state.isEmail}
+                        
                       />
+                       <FormFeedback invalid={!state.valid}>
+                          Is not a available email
+                        </FormFeedback>
                       <div className="form-control-position">
                         <Mail size={15} />
                       </div>
@@ -93,11 +118,29 @@ const Login = (props) => {
                       <Input
                         type="password"
                         placeholder="Password"
-                        value={state.password}
+                        name="password"
+                        value={state.password.valid}
+                       
                         onChange={(e) =>
-                          setState({ ...state, password: e.target.value })
+                          {
+                              
+                            const password = e.target.value;
+                            const emailRegex =  /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,10}$/i;
+                            let valid = true;
+                            if (!emailRegex.test(password)) {
+                              valid = false;
+                            }
+
+                            setState({ ...state,password, valid });
+                          }
                         }
-                      />
+                        invalid={!state.valid}
+                        
+                        />
+                        <FormFeedback invalid={!state.valid}>
+                          Is not a available password
+                          the password must be at least 8 characters long
+                        </FormFeedback>
                       <div className="form-control-position">
                         <Lock size={15} />
                       </div>
@@ -125,7 +168,7 @@ const Login = (props) => {
                     </div>
                   </Form>
                 </CardBody>
-                <div className="auth-footer">
+                {/* <div className="auth-footer">
                   <div className="divider">
                     <div className="divider-text">OR</div>
                   </div>
@@ -148,7 +191,7 @@ const Login = (props) => {
                       <GitHub size={14} stroke="white" />
                     </Button.Ripple>
                   </div>
-                </div>
+                </div> */}
               </Card>
             </Col>
           </Row>

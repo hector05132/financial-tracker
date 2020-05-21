@@ -15,7 +15,7 @@ import * as Icon from "react-feather"
 import classnames from "classnames"
 import Autocomplete from "../../../components/@vuexy/autoComplete/AutoCompleteComponent"
 import { history } from "../../../history"
-
+import client from "../../../configs/apollo";
 
 const UserDropdown = props => {
   return (
@@ -44,7 +44,11 @@ const UserDropdown = props => {
       <DropdownItem
         tag="a"
         href="#"
-        onClick={e => history.push("/pages/login")}
+        onClick={e =>{
+          history.push("/pages/login")
+          client.resetStore()
+          localStorage.removeItem("token")
+        }}
       >
         <Icon.Power size={14} className="mr-50" />
         <span className="align-middle">Log Out</span>
