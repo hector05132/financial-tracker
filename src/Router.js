@@ -17,6 +17,9 @@ const Page2 = lazy(() =>
 const login = lazy(() =>
   import("./views/pages/authentication/login/Login")
 )
+const register = lazy(() =>
+  import("./views/pages/authentication/register/Register")
+)
 
 // Set Layout and Component Using App Route
 const RouteConfig = ({
@@ -77,6 +80,11 @@ class AppRouter extends React.Component {
           <AppRoute
             path="/pages/login"
             component={login}
+            fullLayout
+          />
+          <AppRoute
+            path="/pages/register"
+            component={register}
             fullLayout
           />
         </Switch>

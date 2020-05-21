@@ -91,11 +91,11 @@ class Login extends React.Component {
                             </div>
                           </FormGroup>
                           <div className="d-flex justify-content-between">
-                            <Button.Ripple color="primary" outline>
-                             Register                           
+                            <Button.Ripple color="primary" outline onClick={() => history.push("/pages/register")}>
+                            Sign-up                    
                             </Button.Ripple>
                             <Button.Ripple color="primary" type="submit" onClick={() => history.push("/")}>
-                                Login 
+                                Sign-in 
                             </Button.Ripple>
                           </div>
                         </Form>
