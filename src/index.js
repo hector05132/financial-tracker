@@ -7,19 +7,21 @@ import { store } from "./redux/storeConfig/store"
 import Spinner from "./components/@vuexy/spinner/Fallback-spinner"
 import "./index.scss"
 import "./@fake-db"
-
+import { ApolloProvider } from '@apollo/react-hooks';
+import client from "./configs/apollo"
 const LazyApp = lazy(() => import("./App"))
-
 
 // configureDatabase()
 ReactDOM.render(
+<ApolloProvider client={client}>
     <Provider store={store}>
       <Suspense fallback={<Spinner />}>
         <Layout>
             <LazyApp />
         </Layout>
       </Suspense>
-    </Provider>,
+    </Provider>
+  </ApolloProvider>,
   document.getElementById("root")
 )
 
