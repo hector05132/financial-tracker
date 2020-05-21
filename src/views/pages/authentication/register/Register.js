@@ -10,50 +10,70 @@ import {
   Input,
   Label,
 } from "reactstrap";
-import { Mail, Lock, Check, Facebook, Twitter, GitHub } from "react-feather";
+import {
+  Mail,
+  Lock,
+  Check,
+  Facebook,
+  Twitter,
+  GitHub,
+  Gitlab,
+  Linkedin,
+} from "react-feather";
 import { history } from "../../../../history";
 import Checkbox from "../../../../components/@vuexy/checkbox/CheckboxesVuexy";
 import googleSvg from "../../../../assets/img/svg/google.svg";
 
 import loginImg from "../../../../assets/img/pages/login.png";
 import "../../../../assets/scss/pages/authentication.scss";
-import { useMutation } from "@apollo/react-hooks";
+import Axios from "axios";
+import Modal from "../../../../utility/context/Modal";
 import { gql } from "apollo-boost";
-const autenticar_usuario = gql`
-  mutation autenticarUsuario($input: AutenticarInput) {
-    autenticarUsuario(input: $input) {
-      token
+import { useMutation } from "@apollo/react-hooks";
+const nuevo_usuario = gql`
+  mutation nuevoUsuario($input: UsuariInput) {
+    nuevoUsuario(input: $input) {
+      nombre
     }
   }
 `;
-const Login = (props) => {
+const Register = (props) => {
   const [state, setState] = useState({
     activeTab: "1",
     email: "",
     password: "",
+    confirmPassword: "",
+    modal: false,
+    msg: "A email was send for Confirmation",
+    title: "Succed",
   });
-  const [auth, { data }] = useMutation(autenticar_usuario);
+  const [regis, { data }] = useMutation(nuevo_usuario);
   const toggle = (tab) => {
     if (state.activeTab !== tab) {
-      setState({
-        activeTab: tab,
-      });
+      setState({ ...state, activeTab: tab });
     }
   };
-  console.log(data);
-  if (data && data.autenticarUsuario) {
-    localStorage.setItem("token", data.autenticarUsuario.token);
-    history.push("/");
+  const closeModal = () => {
+    setState({ ...state, modal: false });
+    props.history.push("/pages/login");
+  };
+  if (data && data.nuevoUsuario) {
+    history.push("/pages/login");
   }
-  const submit = (e) => {
+  const handleSubmit = (e) => {
+    const { confirmPassword, email, password } = state;
+    regis({ variables: { input: { email, password } } });
+    console.log("hola");
     e.preventDefault();
-    const { email, password } = state;
-    if (email !== "" && password !== "") {
-      auth({ variables: { input: { email, password } } });
-    }
   };
   return (
     <Row className="m-0 justify-content-center">
+      <Modal
+        modal={state.modal}
+        close={closeModal}
+        msg={state.msg}
+        title={state.title}
+      />
       <Col
         sm="8"
         xl="7"
@@ -72,9 +92,9 @@ const Login = (props) => {
             <Col lg="6" md="12" className="p-0">
               <Card className="rounded-0 mb-0 px-2">
                 <CardBody>
-                  <h4>Login</h4>
-                  <p>Welcome back, please login to your account.</p>
-                  <Form onSubmit={submit}>
+                  <h4>Register</h4>
+                  <p>Welcome back, please register to your account.</p>
+                  <Form onSubmit={handleSubmit}>
                     <FormGroup className="form-label-group position-relative has-icon-left">
                       <Input
                         type="email"
@@ -103,24 +123,33 @@ const Login = (props) => {
                       </div>
                       <Label>Password</Label>
                     </FormGroup>
-                    <FormGroup className="d-flex justify-content-between align-items-center">
-                      <Checkbox
-                        color="primary"
-                        icon={<Check className="vx-icon" size={16} />}
-                        label="Remember me"
+                    <FormGroup className="form-label-group position-relative has-icon-left">
+                      <Input
+                        type="password"
+                        placeholder="Confirm Password"
+                        value={state.confirmPassword}
+                        onChange={(e) =>
+                          setState({
+                            ...state,
+                            confirmPassword: e.target.value,
+                          })
+                        }
                       />
-                      <div className="float-right">Forgot Password?</div>
+                      <div className="form-control-position">
+                        <Lock size={15} />
+                      </div>
+                      <Label>Password</Label>
                     </FormGroup>
                     <div className="d-flex justify-content-between">
                       <Button.Ripple
                         color="primary"
                         outline
-                        onClick={() => history.push("/pages/register")}
+                        onClick={() => history.push("/pages/login")}
                       >
-                        Sign-up
+                        Sign-in
                       </Button.Ripple>
                       <Button.Ripple color="primary" type="submit">
-                        Sign-in
+                        Sign-up
                       </Button.Ripple>
                     </div>
                   </Form>
@@ -147,6 +176,12 @@ const Login = (props) => {
                     <Button.Ripple className="btn-github" color="">
                       <GitHub size={14} stroke="white" />
                     </Button.Ripple>
+                    <Button.Ripple className="btn-google" color="">
+                      <Gitlab size={14} stroke="white" />
+                    </Button.Ripple>
+                    <Button.Ripple className="btn-linkedin" color="">
+                      <Linkedin size={14} stroke="white" />
+                    </Button.Ripple>
                   </div>
                 </div>
               </Card>
@@ -157,4 +192,4 @@ const Login = (props) => {
     </Row>
   );
 };
-export default Login;
+export default Register;
