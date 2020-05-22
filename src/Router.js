@@ -34,8 +34,9 @@ const RouteConfig = ({
   ...rest
 }) => {
   const { loading, error, data } = useQuery(obtener_usuario);
-
-  if (loading) return <p>Loading...</p>;
+  if (loading) return <div className="d-flex justify-content-between align-items-center">
+  <Spinner color="primary" />
+</div>;
 
   console.log(data);
   let { pathname } = history.location;

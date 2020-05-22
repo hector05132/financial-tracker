@@ -1,5 +1,5 @@
 import React from "react";
-import { Navbar } from "reactstrap";
+import { Navbar,Spinner } from "reactstrap";
 import classnames from "classnames";
 import NavbarBookmarks from "./NavbarBookmarks";
 import NavbarUser from "./NavbarUser";
@@ -17,7 +17,7 @@ const obtener_usuario = gql`
 
 const ThemeNavbar = (props) => {
   const { loading, error, data } = useQuery(obtener_usuario);
-
+  
   const colorsArr = ["primary", "danger", "success", "info", "warning", "dark"];
   const navbarTypes = ["floating", "static", "sticky", "hidden"];
   return (
@@ -76,7 +76,7 @@ const ThemeNavbar = (props) => {
               <NavbarUser
                 handleAppOverlay={props.handleAppOverlay}
                 changeCurrentLang={props.changeCurrentLang}
-                userName={data.obtenerUsuario.email}
+                userName={data.obtenerUsuario?data.obtenerUsuario.email: ""}
                 userImg={userImg}
               />
             </div>
