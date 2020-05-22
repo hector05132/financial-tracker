@@ -19,7 +19,7 @@ const register = lazy(() =>
 const obtener_usuario = gql`
   {
     obtenerUsuario {
-      nombre
+      email
     }
   }
 `;
@@ -41,13 +41,14 @@ const RouteConfig = ({
   let { pathname } = history.location;
 
   if (
-    (!data|| (data && !data.obtenerUsuario)) &&
+    (!data || (data && !data.obtenerUsuario)) &&
     loginRoute !== pathname &&
     registerRoute !== pathname
   ) {
     history.push(loginRoute);
   } else if (
-    (data && data.obtenerUsuario) &&
+    data &&
+    data.obtenerUsuario &&
     (loginRoute === pathname || registerRoute === pathname)
   ) {
     history.push("/");

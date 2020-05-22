@@ -9,8 +9,7 @@ import {
   FormGroup,
   Input,
   Label,
-  FormFeedback
-
+  FormFeedback,
 } from "reactstrap";
 import { Mail, Lock, Check, Facebook, Twitter, GitHub } from "react-feather";
 import { history } from "../../../../history";
@@ -33,12 +32,12 @@ const Login = (props) => {
     activeTab: "1",
     email: "",
     password: "",
-    valid:true,
-    isEmail:true
+    valid: true,
+    isEmail: true,
   });
-  const [auth, { data,error }] = useMutation(autenticar_usuario);
-  if (error){
-   console.log (error)
+  const [auth, { data, error }] = useMutation(autenticar_usuario);
+  if (error) {
+    console.log(error);
   }
   const toggle = (tab) => {
     if (state.activeTab !== tab) {
@@ -50,15 +49,15 @@ const Login = (props) => {
   console.log(data);
   if (data && data.autenticarUsuario) {
     localStorage.setItem("token", data.autenticarUsuario.token);
-    client.resetStore()
+    client.resetStore();
     history.push("/");
   }
   const submit = (e) => {
     e.preventDefault();
     const { email, password } = state;
     if (email !== "" && password !== "") {
-      auth({ variables: { input: { email, password } } }).catch(e=>{
-        console.log(e)
+      auth({ variables: { input: { email, password } } }).catch((e) => {
+        console.log(e);
       });
     }
   };
@@ -89,26 +88,25 @@ const Login = (props) => {
                       <Input
                         type="email"
                         placeholder="Email"
+                        name="email"
                         value={state.email}
-                        onChange={(e) =>
-                          {
-                            const email = e.target.value;
-                            const emailRegex = /^[-\w.%+]{1,64}@(?:[A-Z0-9-]{1,63}\.){1,125}[A-Z]{2,63}$/i;
-                            let isEmail = true;
-                            if (!emailRegex.test(email)) {
-                              isEmail = false;
-                            }
-
-                            setState({ ...state,email, isEmail });
+                        onChange={(e) => {
+                          const email = e.target.value;
+                          var mediumRegex = new RegExp(
+                            "^([a-z0-9!#$%&+/=?^_`.{|}~-]+(?:.[a-z0-9!#$%&+/=?^_`{|}~-]+))@([a-z0-9]+)?(.[a-z0-9]+)(.[a-z0-9]+)(.[a-z0-9-.com]+)$"
+                          );
+                          let isEmail = true;
+                          if (!mediumRegex.test(email)) {
+                            isEmail = false;
                           }
-                          
-                        }
+
+                          setState({ ...state, email, isEmail });
+                        }}
                         invalid={!state.isEmail}
-                        
                       />
-                       <FormFeedback invalid={!state.valid}>
-                          Is not a available email
-                        </FormFeedback>
+                      <FormFeedback invalid={!state.valid}>
+                        Is not a available email
+                      </FormFeedback>
                       <div className="form-control-position">
                         <Mail size={15} />
                       </div>
@@ -120,27 +118,24 @@ const Login = (props) => {
                         placeholder="Password"
                         name="password"
                         value={state.password.valid}
-                       
-                        onChange={(e) =>
-                          {
-                              
-                            const password = e.target.value;
-                            const emailRegex =  /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,10}$/i;
-                            let valid = true;
-                            if (!emailRegex.test(password)) {
-                              valid = false;
-                            }
-
-                            setState({ ...state,password, valid });
+                        onChange={(e) => {
+                          const password = e.target.value;
+                          var mediumRegex = new RegExp(
+                            "^([a-zA-Z0-9!{}+><$@%&./()=*#_-]{8,30})$"
+                          );
+                          let valid = true;
+                          if (!mediumRegex.test(password)) {
+                            valid = false;
                           }
-                        }
+
+                          setState({ ...state, password, valid });
+                        }}
                         invalid={!state.valid}
-                        
-                        />
-                        <FormFeedback invalid={!state.valid}>
-                          Is not a available password
-                          the password must be at least 8 characters long
-                        </FormFeedback>
+                      />
+                      <FormFeedback invalid={!state.valid}>
+                        Is not a available password the password must be at
+                        least 8 characters long
+                      </FormFeedback>
                       <div className="form-control-position">
                         <Lock size={15} />
                       </div>

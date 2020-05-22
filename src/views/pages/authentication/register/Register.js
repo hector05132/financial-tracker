@@ -9,6 +9,7 @@ import {
   FormGroup,
   Input,
   Label,
+  FormFeedback,
 } from "reactstrap";
 import {
   Mail,
@@ -33,7 +34,7 @@ import { useMutation } from "@apollo/react-hooks";
 const nuevo_usuario = gql`
   mutation nuevoUsuario($input: UsuarioInput) {
     nuevoUsuario(input: $input) {
-      nombre
+      email
     }
   }
 `;
@@ -43,6 +44,9 @@ const Register = (props) => {
     email: "",
     password: "",
     confirmPassword: "",
+    valid: true,
+    isEmail: true,
+    isComfirm: true,
     modal: false,
     msg: "A email was send for Confirmation",
     title: "Succed",
@@ -62,7 +66,9 @@ const Register = (props) => {
   }
   const handleSubmit = (e) => {
     const { confirmPassword, email, password } = state;
-    regis({ variables: { input: { email, password,confirmPassword } } }).catch(e=>console.log(e));
+    regis({
+      variables: { input: { email, password, confirmPassword } },
+    }).catch((e) => console.log(e));
     console.log("hola");
     e.preventDefault();
   };
@@ -99,11 +105,25 @@ const Register = (props) => {
                       <Input
                         type="email"
                         placeholder="Email"
+                        name="email"
                         value={state.email}
-                        onChange={(e) =>
-                          setState({ ...state, email: e.target.value })
-                        }
+                        onChange={(e) => {
+                          const email = e.target.value;
+                          var mediumRegex = new RegExp(
+                            "^([a-z0-9!#$%&+/=?^_`.{|}~-]+(?:.[a-z0-9!#$%&+/=?^_`{|}~-]+))@([a-z0-9]+)?(.[a-z0-9]+)(.[a-z0-9]+)(.[a-z0-9-.com]+)$"
+                          );
+                          let isEmail = true;
+                          if (!mediumRegex.test(email)) {
+                            isEmail = false;
+                          }
+
+                          setState({ ...state, email, isEmail });
+                        }}
+                        invalid={!state.isEmail}
                       />
+                      <FormFeedback invalid={!state.valid}>
+                        Is not a available email
+                      </FormFeedback>
                       <div className="form-control-position">
                         <Mail size={15} />
                       </div>
@@ -113,11 +133,26 @@ const Register = (props) => {
                       <Input
                         type="password"
                         placeholder="Password"
-                        value={state.password}
-                        onChange={(e) =>
-                          setState({ ...state, password: e.target.value })
-                        }
+                        name="password"
+                        value={state.password.valid}
+                        onChange={(e) => {
+                          const password = e.target.value;
+                          var mediumRegex = new RegExp(
+                            "^([a-zA-Z0-9!{}+><$@%&./()=*#_-]{8,30})$"
+                          );
+                          let valid = true;
+                          if (!mediumRegex.test(password)) {
+                            valid = false;
+                          }
+
+                          setState({ ...state, password, valid });
+                        }}
+                        invalid={!state.valid}
                       />
+                      <FormFeedback invalid={!state.valid}>
+                        Is not a available password the password must be at
+                        least 8 characters long
+                      </FormFeedback>
                       <div className="form-control-position">
                         <Lock size={15} />
                       </div>
@@ -128,13 +163,22 @@ const Register = (props) => {
                         type="password"
                         placeholder="Confirm Password"
                         value={state.confirmPassword}
-                        onChange={(e) =>
+                        onChange={(e) => {
+                          let isComfirm = true;
+                          if (e.target.value !== state.password) {
+                            isComfirm = false;
+                          }
                           setState({
                             ...state,
                             confirmPassword: e.target.value,
-                          })
-                        }
+                            isComfirm,
+                          });
+                        }}
+                        invalid={!state.isComfirm}
                       />
+                      <FormFeedback invalid={!state.isComfirm}>
+                        los password deben ser iguales
+                      </FormFeedback>
                       <div className="form-control-position">
                         <Lock size={15} />
                       </div>
