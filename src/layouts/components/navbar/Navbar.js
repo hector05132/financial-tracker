@@ -1,14 +1,25 @@
-import React from "react"
-import { Navbar } from "reactstrap"
-import classnames from "classnames"
-import NavbarBookmarks from "./NavbarBookmarks"
-import NavbarUser from "./NavbarUser"
-import userImg from "../../../assets/img/portrait/small/avatar-s-11.jpg"
+import React from "react";
+import { Navbar } from "reactstrap";
+import classnames from "classnames";
+import NavbarBookmarks from "./NavbarBookmarks";
+import NavbarUser from "./NavbarUser";
+import userImg from "../../../assets/img/portrait/small/avatar-s-11.jpg";
+import { gql } from "apollo-boost";
+import { useQuery } from "@apollo/react-hooks";
 
+const obtener_usuario = gql`
+  {
+    obtenerUsuario {
+      email
+    }
+  }
+`;
 
-const ThemeNavbar = props => {
-  const colorsArr = [ "primary", "danger", "success", "info", "warning", "dark"]
-  const navbarTypes = ["floating" , "static" , "sticky" , "hidden"]
+const ThemeNavbar = (props) => {
+  const { loading, error, data } = useQuery(obtener_usuario);
+
+  const colorsArr = ["primary", "danger", "success", "info", "warning", "dark"];
+  const navbarTypes = ["floating", "static", "sticky", "hidden"];
   return (
     <React.Fragment>
       <div className="content-overlay" />
@@ -17,7 +28,9 @@ const ThemeNavbar = props => {
         className={classnames(
           "header-navbar navbar-expand-lg navbar navbar-with-menu navbar-shadow",
           {
-            "navbar-light": props.navbarColor === "default" || !colorsArr.includes(props.navbarColor),
+            "navbar-light":
+              props.navbarColor === "default" ||
+              !colorsArr.includes(props.navbarColor),
             "navbar-dark": colorsArr.includes(props.navbarColor),
             "bg-primary":
               props.navbarColor === "primary" && props.navbarType !== "static",
@@ -33,12 +46,12 @@ const ThemeNavbar = props => {
               props.navbarColor === "dark" && props.navbarType !== "static",
             "d-none": props.navbarType === "hidden" && !props.horizontal,
             "floating-nav":
-              (props.navbarType === "floating" && !props.horizontal) || (!navbarTypes.includes(props.navbarType) && !props.horizontal),
+              (props.navbarType === "floating" && !props.horizontal) ||
+              (!navbarTypes.includes(props.navbarType) && !props.horizontal),
             "navbar-static-top":
               props.navbarType === "static" && !props.horizontal,
             "fixed-top": props.navbarType === "sticky" || props.horizontal,
-            "scrolling": props.horizontal && props.scrolling
-
+            scrolling: props.horizontal && props.scrolling,
           }
         )}
       >
@@ -63,16 +76,15 @@ const ThemeNavbar = props => {
               <NavbarUser
                 handleAppOverlay={props.handleAppOverlay}
                 changeCurrentLang={props.changeCurrentLang}
-                userName="John Doe"
-                userImg={ userImg }
+                userName={data.obtenerUsuario.email}
+                userImg={userImg}
               />
             </div>
           </div>
         </div>
       </Navbar>
     </React.Fragment>
-  )
-}
+  );
+};
 
-
-export default ThemeNavbar
+export default ThemeNavbar;
